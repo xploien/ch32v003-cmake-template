@@ -1,0 +1,13 @@
+ CompileFlags:
+
+  Add: [
+
+    - --target=riscv32-unknown-elf,
+# WARNING! you shoulg change this paths to match your setup, use the compiler folders, I reccomend having the compiler folder one directory up to your projects directories, you also need to update this paths in the cmake
+     -I../toolchain/RISC-V Embedded GCC12/riscv-wch-elf/include,
+
+     -I../toolchain/RISC-V Embedded GCC12/lib/gcc/riscv-wch-elf/12.2.0/include/
+
+    ]
+
+  Remove: [-mabi=*, -march=*, -msmall-data-limit=*, -msave-restore] 
