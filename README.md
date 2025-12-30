@@ -1,29 +1,38 @@
-# ch32v003evt with gcc and makefile support
+# CH32V003 CMake Template
 
-This is pre-converted ch32v003 firmware library with gcc and makefile support from WCH official CH32V003EVT.ZIP. 
+Inspired by [ch32v_evt_makefile_gcc_project_template](https://github.com/cjacker/ch32v_evt_makefile_gcc_project_template).
 
-It is converted by '[ch32v_evt_makefile_gcc_project_template](https://github.com/cjacker/ch32v_evt_makefile_gcc_project_template)'
+This template enables development for the **CH32V003** platform using any IDE that supports the CMake build system.
 
-This firmware library support below parts from WCH:
+## Setup
 
-- ch32v003j4m6
-- ch32v003a4m6
-- ch32v003f4u6
-- ch32v003f4p6
+To get it running, you only need to configure the toolchain paths in two files:
 
-The default part is set to 'ch32v003f4u6', you can change it with `./setpart.sh <part>`. the corresponding settings such flash and ram size will update automatically from the template. Since up to now, all known ch32v003 models had the same resources (16k flash, 2k ram), it only affect target name in Makefile. For new models in future, it can be added to `ch32v-parts-list.txt`.
+### 1. CMakeLists.txt
+Define the path to your compiler's `bin` folder:
+```cmake
+set(TOOLCHAIN_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../toolchain/RISC-V Embedded GCC12/bin")
 
-All examples shipped in original EVT package provided in 'Examples' dir.
+```
 
-The default 'User' codes is 'GPIO_Toggle' example, the default system frequency is set to 'SYSCLK_FREQ_48MHZ_HSI' in 'User/system_ch32v00x.c'. 
+### 2. .clangd (LSP Support)
 
-To build the project, type `make`.
+For full LSP support, update the include paths in `.clangd`:
 
-**NOTE:** '-march=rv32ec_zicsr' works with xpack gcc v14.2.0. for gcc version below v12, you may need change it to '-march=rv32ec'.
+```yaml
+CompileFlags:
+  Add: [
+    "-I../toolchain/RISC-V Embedded GCC12/riscv-wch-elf/include",
+    "-I../toolchain/RISC-V Embedded GCC12/lib/gcc/riscv-wch-elf/12.2.0/include"
+  ]
+  Remove: [-msave-restore, -msmall-data-limit=*, -march=*, -mabi=*]
 
-**NOTE:** the default demo codes will toggle PD6 since [nanoCH32V003](https://github.com/wuxx/nanoCH32V003) board from muselab has the led connect to PD6, change it according to your own board.
+```
+## Hacky fix
 
-**NOTE:** Please refer to [opensource-toolchain-ch32v tutorial](https://github.com/cjacker/opensource-toolchain-ch32v) for more info.
+This template replaces the compiled target with the `flash_and_monitor.sh` script. This script flashes the firmware using the [wlink](https://github.com/ch32-rs/wlink) utility.
 
-**NOTE:** you must use [this latest WCH OpenOCD](https://github.com/cjacker/wch-openocd).
+### Dependencies
 
+* **Python 3** (Required for the serial monitor).
+* **wlink** (Required for flashing).
